@@ -1,8 +1,10 @@
+#define CATCH_CONFIG_MAIN
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 #include <stack>
 #include <vector>
+#include "catch.hpp" // unit testing with Catch2
 
 using namespace std; // possibly remove this
 
@@ -53,7 +55,6 @@ string findAlphabet(vector<string> &words) {
                 // set relation in nodes graph
                 Node *n1 = nodes[firstChar];
                 Node *n2 = nodes[secondChar];
-                cout << n1->c << " " << n2->c << "\n";
 
                 // only add relation if it doesn't already exist
                 if (n1->nextNeighbors.find(n2) == n1->nextNeighbors.end()) {
@@ -96,29 +97,9 @@ string findAlphabet(vector<string> &words) {
     return alphabet;
 }
 
-/* Driver */
-int main() {
-    vector<string> wordsWithFirstLetterNested;
-    // TODO: read from input test file instead of here
-    wordsWithFirstLetterNested.push_back("bb");
-    wordsWithFirstLetterNested.push_back("bh");
-    wordsWithFirstLetterNested.push_back("hb");
-    wordsWithFirstLetterNested.push_back("hc");
-    wordsWithFirstLetterNested.push_back("hd");
-    wordsWithFirstLetterNested.push_back("dc");
-    wordsWithFirstLetterNested.push_back("dh");
-    wordsWithFirstLetterNested.push_back("ddg");
-    wordsWithFirstLetterNested.push_back("ddb");
-
-    string s = "alphabet: " + findAlphabet(wordsWithFirstLetterNested);
-    cout << s << "\n";
-
-    vector<string> exampleTestCase;
-    exampleTestCase.push_back("bca");
-    exampleTestCase.push_back("aaa");
-    exampleTestCase.push_back("acb");
-    string s2 = "alphabet: " + findAlphabet(exampleTestCase);
-    cout << s2 << "\n";
-
-    return 0;
+TEST_CASE( "Get alphabet") {
+    vector<string> sampleTest = {"bca", "aaa", "acb"};
+    REQUIRE( findAlphabet(sampleTest) == "bac" );
+    vector<string> firstAlphabetLetterNestedInWord = {"bb", "bh", "hb", "hc", "hd", "dc", "dh", "ddg", "ddb"};
+    REQUIRE( findAlphabet(firstAlphabetLetterNestedInWord) == "gbchd" );
 }

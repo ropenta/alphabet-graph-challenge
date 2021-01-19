@@ -20,11 +20,28 @@ struct Node {
 };
 
 class Alphabet {
+private:
+    /* member variables */
+    vector<string> words;
+    unordered_map<char, Node*> nodes;
+    stack<Node*> nextLetters;
+    unordered_set<char> zeroInCount;
+    vector<char> alphabet;
+
 public:
+    /* Constructor */
+    Alphabet(vector<string> in_words) {
+        words = in_words;
+        nodes = {};
+        nextLetters = {};
+        zeroInCount = {};
+        alphabet = {};
+    }
+
     /* Input: stack of next letters to go into alphabet*/
     /* Modifies: stack */
     /* Returns: alphabet in string format */
-    vector<char> createAlphabet(stack<Node*> &nextLetters, unordered_map<char, Node*> &nodes) {
+    vector<char> createAlphabet() {
         vector<char> alphabet = {};
         bool multipleAlphabets = false;
         while (!nextLetters.empty()) {
@@ -56,22 +73,20 @@ public:
 
     /* Input: graph, set of letters with no inbound nodes pointing to them, empty stack of next letters to go into alphabet*/
     /* Modifies: graph, set of letters, stack of next alphabet letters */
-    void addFirstLetter(unordered_map<char, Node*> &nodes, unordered_set<char> &zeroInCount, stack<Node*> &nextLetters) {
+    stack<Node*> addFirstLetter() {
         if (zeroInCount.size() < 1) {
             cout << "No alphabet found\n";
-            return;
+            return {};
         }
         char c = *zeroInCount.begin();
         Node *n1 = nodes[c];
         nextLetters.push(n1);
+        return nextLetters;
     }
 
     /* Input: word list, empty graph, set of letters with no inbound nodes pointing to them */
     /* Modifies: graph, set of letters */
-    void createDirectedGraph(
-            vector<string> &words, 
-            unordered_map<char, Node*> &nodes, 
-            unordered_set<char> &zeroInCount) {
+    unordered_map<char, Node*> createDirectedGraph() {
         // loop through all adjacent pairs of words
         for (int i = 0; i < words.size() - 1; i++) {
             string firstWord = words[i];
@@ -109,92 +124,87 @@ public:
                 }
             }
         }
+        return nodes;
     }
 
     /* Input: list of words */
     /* Output: alphabet     */
-    vector<char> findAlphabet(vector<string> &words) {
+    vector<char> findAlphabet() {
         if (words.size() < 1) {
             return {};
         } else if (words.size() == 1) {
-            // edge case: 1 word with 1 letter
-            if (words[0].size() == 1) {
-                char c = words[0][0];
-                return vector<char>{c};
-            } else {
-                return {};
+            // edge case: 1 word
+            char c = words[0][0];
+            for (int i = 1; i < words[0].size(); i++) {
+                // only valid if all chars are the same
+                if (words[0][i] != c) {
+                    return vector<char>{};
+                }
             }
+            return vector<char>{c};
         }
 
-        // 0. create data structures
-        unordered_map<char, Node*> nodes;
-        unordered_set<char> zeroInCount;
-        stack<Node*> nextLetters;
-        vector<char> alphabet = {};
-
         // 1. compare adjacent words, find first difference if it exists
-        createDirectedGraph(words, nodes, zeroInCount);
+        nodes = createDirectedGraph();
 
         // 2. find and add first letter, if it is unambiguous
-        /* TODO: handle errors in a more standard way (try-catch, exception) */
-        addFirstLetter(nodes, zeroInCount, nextLetters);
+        nextLetters = addFirstLetter();
 
         // 3. add curr item to alphabet, get neighbors, decrease inCount, add zero in count nodes to stack
-        return createAlphabet(nextLetters, nodes);
+        return createAlphabet();
     }
 };
 
-TEST_CASE( "Valid alphabets") {
-    vector<string> sampleTest = {"bca", "aaa", "acb"};
-    vector<string> firstAlphabetLetterNestedInWord = {"bb", "bh", "hb", "hc", "hd", "dc", "dh", "ddg", "ddb"};
-    Alphabet a = Alphabet();
-    REQUIRE( a.findAlphabet(sampleTest) == vector<char>{'b', 'a', 'c'});
-    REQUIRE( a.findAlphabet(firstAlphabetLetterNestedInWord) == vector<char>{'g','b','c','h','d'} );
+TEST_CASE( "Test all function calls") {
+    Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
+    REQUIRE( sampleTest.createDirectedGraph().size() == 3);
+    REQUIRE( sampleTest.addFirstLetter().top()->c == 'b');
+    REQUIRE( sampleTest.createAlphabet() == vector<char>{'b', 'a', 'c'});
+    REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'}); 
 }
 
-TEST_CASE( "Valid small inputs") {
-    vector<string> noWords = {};
-    vector<string> oneLetter = {"h"};
-    vector<string> oneLetterWords = {"h", "i", "a", "b", "b"};
-    Alphabet a = Alphabet();
-
-    REQUIRE( a.findAlphabet(noWords) == vector<char>{});
-    REQUIRE( a.findAlphabet(oneLetter) == vector<char>{'h'});
-    REQUIRE( a.findAlphabet(oneLetterWords) == vector<char>{'h','i','a','b'});
+TEST_CASE( "Test valid alphabets") {
+    Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
+    Alphabet firstAlphabetLetterNestedInLastWord = Alphabet({"bb", "bh", "hb", "hc", "hd", "dc", "dh", "ddg", "ddb"});
+    REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'});
+    REQUIRE( firstAlphabetLetterNestedInLastWord.findAlphabet() == vector<char>{'g','b','c','h','d'} );
 }
 
-TEST_CASE( "Valid duplicate words") {
-    vector<string> sameWords = {"h", "h"};
-    vector<string> duplicatesAtEnd = {"bb", "bh", "hb", "hb"};
-    vector<string> duplicatesAtStart = {"bb", "bb", "hb", "hi"};
-    vector<string> multipleDuplicates = {"bb", "bb", "hb", "hb"};
-    Alphabet a = Alphabet();
-
-    REQUIRE( a.findAlphabet(sameWords) == vector<char>{'h'});
-    REQUIRE( a.findAlphabet(duplicatesAtEnd) == vector<char>{'b', 'h'});
-    REQUIRE( a.findAlphabet(duplicatesAtStart) == vector<char>{'b', 'h', 'i'}); // ambiguous
-    REQUIRE( a.findAlphabet(multipleDuplicates) == vector<char>{'b', 'h'});
+TEST_CASE( "Test valid small inputs") {
+    Alphabet noWords = Alphabet({});
+    Alphabet oneLetter = Alphabet({"h"});
+    Alphabet oneLetterWords = Alphabet({"h", "i", "a", "b", "b"});
+    Alphabet oneWordTwoSameLetters = Alphabet({"hh"});
+    REQUIRE( noWords.findAlphabet() == vector<char>{});
+    REQUIRE( oneLetter.findAlphabet() == vector<char>{'h'});
+    REQUIRE( oneLetterWords.findAlphabet() == vector<char>{'h','i','a','b'});
+    REQUIRE( oneWordTwoSameLetters.findAlphabet() == vector<char>{'h'});
 }
 
-TEST_CASE( "Invalid small inputs") {
-    vector<string> oneWord = {"hi"};
-    Alphabet a = Alphabet();
-    
-    REQUIRE( a.findAlphabet(oneWord) == vector<char>{});
+TEST_CASE( "Testvalid duplicate words") {
+    Alphabet sameWords = Alphabet({"h", "h"});
+    Alphabet duplicatesAtEnd = Alphabet({"bb", "bh", "hb", "hb"});
+    Alphabet duplicatesAtStart = Alphabet({"bb", "bb", "hb", "hi"});
+    Alphabet multipleDuplicates = Alphabet({"bb", "bb", "hb", "hb"});
+    REQUIRE( sameWords.findAlphabet() == vector<char>{'h'});
+    REQUIRE( duplicatesAtEnd.findAlphabet() == vector<char>{'b', 'h'});
+    REQUIRE( duplicatesAtStart.findAlphabet() == vector<char>{'b', 'h', 'i'}); // ambiguous
+    REQUIRE( multipleDuplicates.findAlphabet() == vector<char>{'b', 'h'});
 }
 
-TEST_CASE( "Invalid cycles") {
-    vector<string> twoLetterCycle = {"ba", "aa", "ab"};
-    vector<string> threeLetterCycle = {"abc", "acb", "abc", "bca"};
-    Alphabet a = Alphabet();
+TEST_CASE( "Test invalid small inputs") {
+    Alphabet oneWord = Alphabet({"hi"});    
+    REQUIRE( oneWord.findAlphabet() == vector<char>{});
+}
 
-    REQUIRE( a.findAlphabet(twoLetterCycle) == vector<char>{});
-    REQUIRE( a.findAlphabet(threeLetterCycle) == vector<char>{});
+TEST_CASE( "Test invalid cycles") {
+    Alphabet twoLetterCycle = Alphabet({"ba", "aa", "ab"});
+    Alphabet threeLetterCycle = Alphabet({"abc", "acb", "abc", "bca"});
+    REQUIRE( twoLetterCycle.findAlphabet() == vector<char>{});
+    REQUIRE( threeLetterCycle.findAlphabet() == vector<char>{});
 }
 
 // TODO:
-// create a class with common parameters as private variables
+// move tests into separate file
 // allow for user to input an input file, or multiple strings
 // allow user to run program as CLI tool
-// add test cases for helper funtions
-// move tests into separate file

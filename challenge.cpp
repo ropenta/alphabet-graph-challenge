@@ -8,19 +8,21 @@
 
 using namespace std;
 
-/* Each unique char belongs to a Node */
-struct Node {
-    char c;                         // current char
-    int inCount = 0;                    // # of incoming arrows
-    unordered_set<Node*> nextNeighbors;    // neighbors confirmed to be after this char
 
-    Node(char in_char) {
-        c = in_char;
-    }
-};
 
 class Alphabet {
-private:
+private:    
+    /* Each unique char belongs to a Node */
+    struct Node {
+        char c;                                 // current char
+        int inCount = 0;                        // # of incoming arrows
+        unordered_set<Node*> nextNeighbors;     // neighbors after this char
+
+        Node(char in_char) {
+            c = in_char;
+        }
+    };
+
     /* member variables */
     vector<string> words;
     unordered_map<char, Node*> nodes;

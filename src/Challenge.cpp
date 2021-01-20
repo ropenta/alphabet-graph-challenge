@@ -10,56 +10,40 @@ Alphabet::Alphabet(vector<string> in_words) {
     zeroInCount = {};
     alphabet = {};
 }
-
 /* Node constructor */
 Alphabet::Node::Node(char in_char) {
     c = in_char;
 }
 
-/* Modifies: stack of next letters to go into alphabet
- * Returns: alphabet in string format 
- */
-vector<char> Alphabet::createAlphabet() {
-    vector<char> alphabet = {};
-    bool multipleAlphabets = false; // unused here, but can be used if needed
-    while (!nextLetters.empty()) {
-        Node *letter = nextLetters.top();
-        nextLetters.pop();
-        alphabet.push_back(letter->c);
-        for (auto &n: letter->nextNeighbors) {
-            n->inCount--;
-            if (n->inCount < 1) {
-                // multiple letters pushed in a loop can lead to multiple possible alphabets
-                nextLetters.push(n);
+
+/* Input: list of words */
+/* Output: alphabet     */
+vector<char> Alphabet::findAlphabet() {
+    // 0. check cases with 1 or fewer words
+    if (words.size() < 1) {
+        return {};
+    } else if (words.size() == 1) {
+        // edge case: 1 word
+        char c = words[0][0];
+        for (int i = 1; i < words[0].size(); i++) {
+            // only valid if all chars are the same
+            if (words[0][i] != c) {
+                return vector<char>{};
             }
         }
-        // Can check for multiple alphabets by seeing if more than 1 letter can be next
-        if (nextLetters.size() > 1) {
-            multipleAlphabets = true;
-        }
+        return vector<char>{c};
     }
 
-    // invalid: not all letters were included (cycles, invalid input)
-    if (nodes.size() != alphabet.size()) {
-        alphabet = vector<char>{};
-    }
-    return alphabet;
+    // 1. compare adjacent words, find first difference if it exists
+    nodes = createDirectedGraph();
+
+    // 2. find and add first letter, if it is unambiguous
+    nextLetters = addFirstLetter();
+
+    // 3. add curr item to alphabet, get neighbors, decrease inCount, add zero in count nodes to stack
+    return createAlphabet();
 }
 
-/* Modifies: graph, set of letters with no inbound nodes pointing to them, 
- *            empty stack of next letters to go into alphabet
- */
-stack<Alphabet::Node*> Alphabet::addFirstLetter() {
-    // Check if a char exists that has no chars before it
-    if (zeroInCount.size() < 1) {
-        // No alphabet can be created
-        return {};
-    }
-    char c = *zeroInCount.begin();
-    Node *n1 = nodes[c];
-    nextLetters.push(n1);
-    return nextLetters;
-}
 
 /* Modifies: empty graph, set of letters with no inbound nodes pointing to them
  */
@@ -104,29 +88,49 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
     return nodes;
 }
 
-/* Input: list of words */
-/* Output: alphabet     */
-vector<char> Alphabet::findAlphabet() {
-    if (words.size() < 1) {
+
+/* Modifies: graph, set of letters with no inbound nodes pointing to them, 
+ *            empty stack of next letters to go into alphabet
+ */
+stack<Alphabet::Node*> Alphabet::addFirstLetter() {
+    // Check if a char exists that has no chars before it
+    if (zeroInCount.size() < 1) {
+        // No alphabet can be created
         return {};
-    } else if (words.size() == 1) {
-        // edge case: 1 word
-        char c = words[0][0];
-        for (int i = 1; i < words[0].size(); i++) {
-            // only valid if all chars are the same
-            if (words[0][i] != c) {
-                return vector<char>{};
+    }
+    char c = *zeroInCount.begin();
+    Node *n1 = nodes[c];
+    nextLetters.push(n1);
+    return nextLetters;
+}
+
+
+/* Modifies: stack of next letters to go into alphabet
+ * Returns: alphabet in string format 
+ */
+vector<char> Alphabet::createAlphabet() {
+    vector<char> alphabet = {};
+    bool multipleAlphabets = false; // unused here, but can be used if needed
+    while (!nextLetters.empty()) {
+        Node *letter = nextLetters.top();
+        nextLetters.pop();
+        alphabet.push_back(letter->c);
+        for (auto &n: letter->nextNeighbors) {
+            n->inCount--;
+            if (n->inCount < 1) {
+                // multiple letters pushed in a loop can lead to multiple possible alphabets
+                nextLetters.push(n);
             }
         }
-        return vector<char>{c};
+        // Can check for multiple alphabets by seeing if more than 1 letter can be next
+        if (nextLetters.size() > 1) {
+            multipleAlphabets = true;
+        }
     }
 
-    // 1. compare adjacent words, find first difference if it exists
-    nodes = createDirectedGraph();
-
-    // 2. find and add first letter, if it is unambiguous
-    nextLetters = addFirstLetter();
-
-    // 3. add curr item to alphabet, get neighbors, decrease inCount, add zero in count nodes to stack
-    return createAlphabet();
+    // invalid: not all letters were included (cycles, invalid input)
+    if (nodes.size() != alphabet.size()) {
+        alphabet = vector<char>{};
+    }
+    return alphabet;
 }

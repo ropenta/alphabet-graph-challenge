@@ -4,10 +4,10 @@ using namespace std;
 
 TEST_CASE( "Test all function calls") {
     Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
+    REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'}); 
     REQUIRE( sampleTest.createDirectedGraph().size() == 3);
     REQUIRE( sampleTest.addFirstLetter().top()->c == 'b');
     REQUIRE( sampleTest.createAlphabet() == vector<char>{'b', 'a', 'c'});
-    REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'}); 
 }
 
 TEST_CASE( "Test valid alphabets") {
@@ -28,7 +28,14 @@ TEST_CASE( "Test valid small inputs") {
     REQUIRE( oneWordTwoSameLetters.findAlphabet() == vector<char>{'h'});
 }
 
-TEST_CASE( "Testvalid duplicate words") {
+TEST_CASE( "Test valid alphanumeric inputs") {
+    Alphabet numbers = Alphabet({"231", "111", "132"});
+    Alphabet numbersAndLetters = Alphabet({"1A", "AB", "B2", "21"});
+    REQUIRE( numbers.findAlphabet() == vector<char>{'2', '1', '3'});
+    REQUIRE( numbersAndLetters.findAlphabet() == vector<char>{'1', 'A', 'B', '2'});
+}
+
+TEST_CASE( "Test valid duplicate words") {
     Alphabet sameWords = Alphabet({"h", "h"});
     Alphabet duplicatesAtEnd = Alphabet({"bb", "bh", "hb", "hb"});
     Alphabet duplicatesAtStart = Alphabet({"bb", "bb", "hb", "hi"});

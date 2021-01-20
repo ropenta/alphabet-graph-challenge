@@ -30,10 +30,10 @@ public:
     Alphabet(vector<string> in_words);
 
     /* Member functions */
-    vector<char> createAlphabet();
-    stack<Node*> addFirstLetter();
-    unordered_map<char, Node*> createDirectedGraph();
-    vector<char> findAlphabet();
+    vector<char> findAlphabet();                        // Step 0: calls all the following functions
+    unordered_map<char, Node*> createDirectedGraph();   // Step 1: creates graph connecting chars by their ordering
+    stack<Node*> addFirstLetter();                      // Step 2: adds the first letter of the alphabet (if it exists)
+    vector<char> createAlphabet();                      // Step 3: adds the rest of the alphabet
 };
 
 #endif

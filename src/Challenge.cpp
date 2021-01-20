@@ -115,6 +115,7 @@ vector<char> Alphabet::createAlphabet() {
         Node *letter = nextLetters.top();
         nextLetters.pop();
         alphabet.push_back(letter->c);
+        // update counts of neighboring letters, and add those that are next in line to the alphabet
         for (auto &n: letter->nextNeighbors) {
             n->inCount--;
             if (n->inCount < 1) {

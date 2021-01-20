@@ -27,3 +27,5 @@ Then, you can type `make` followed by the command you'd like to run
 
 ## Using your own custom input:
 You can modify `main.cpp` to use a different set of input words, and `make program` will build the executable
+Reading through `Challenge.h` first will help in understanding `Challenge.cpp` better.
+All the unit tests are included in `ChallengeTest.cpp`.

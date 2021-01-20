@@ -1,13 +1,8 @@
-#include <iostream>
-#include <unordered_map>  // hash map
-#include <unordered_set>  // hash set
-#include <stack>
-#include <vector>
 #include "Challenge.h"
 
 using namespace std;
 
-
+/* Constructor */
 Alphabet::Alphabet(vector<string> in_words) {
     words = in_words;
     nodes = {};
@@ -16,10 +11,14 @@ Alphabet::Alphabet(vector<string> in_words) {
     alphabet = {};
 }
 
+/* Node constructor */
 Alphabet::Node::Node(char in_char) {
     c = in_char;
 }
 
+/* Modifies: stack of next letters to go into alphabet
+ * Returns: alphabet in string format 
+ */
 vector<char> Alphabet::createAlphabet() {
     vector<char> alphabet = {};
     bool multipleAlphabets = false;
@@ -50,6 +49,9 @@ vector<char> Alphabet::createAlphabet() {
     return alphabet;
 }
 
+/* Modifies: graph, set of letters with no inbound nodes pointing to them, 
+ *            empty stack of next letters to go into alphabet
+ */
 stack<Alphabet::Node*> Alphabet::addFirstLetter() {
     if (zeroInCount.size() < 1) {
         cout << "No alphabet found\n";
@@ -61,8 +63,8 @@ stack<Alphabet::Node*> Alphabet::addFirstLetter() {
     return nextLetters;
 }
 
-/* Input: word list, empty graph, set of letters with no inbound nodes pointing to them */
-/* Modifies: graph, set of letters */
+/* Modifies: empty graph, set of letters with no inbound nodes pointing to them
+ */
 unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
     // loop through all adjacent pairs of words
     for (int i = 0; i < words.size() - 1; i++) {
@@ -130,10 +132,3 @@ vector<char> Alphabet::findAlphabet() {
     // 3. add curr item to alphabet, get neighbors, decrease inCount, add zero in count nodes to stack
     return createAlphabet();
 }
-
-// TODO:
-// https://github.com/anderspitman/cpp_bootstrap
-// move tests into separate file
-// create a Makefile for 'run' with input, and 'test'
-// allow for user to input an input file, or multiple strings
-// allow user to run program as CLI tool

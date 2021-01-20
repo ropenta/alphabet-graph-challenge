@@ -21,11 +21,11 @@ Output:
 First, download `clang` so that you can run c++14 on your machine
 
 Then, you can type `make` followed by the command you'd like to run
-* For example, `make program` builds a `program` executable that can be directly run with `./program`.
+* For example, `make run` builds a `program` executable, runs it, and prints out output
 * Running `make test` runs the suite of unit tests defined in ChallengeTest.cpp
 * Running `make clean` removes the executables created by the `program` and `test` commands. You should run this after each command to ensure you are using the latest code.
 
 ## Using your own custom input:
-You can modify `main.cpp` to use a different set of input words, and `make program` will build the executable.
+You can modify `main.cpp` to use a different set of input words, and `make run` will build the executable.
 
 Reading through `Challenge.h` first will help in understanding `Challenge.cpp` better. All the unit tests are included in `ChallengeTest.cpp`.

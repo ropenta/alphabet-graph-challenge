@@ -21,7 +21,7 @@ Alphabet::Node::Node(char in_char) {
  */
 vector<char> Alphabet::createAlphabet() {
     vector<char> alphabet = {};
-    bool multipleAlphabets = false;
+    bool multipleAlphabets = false; // unused here, but can be used if needed
     while (!nextLetters.empty()) {
         Node *letter = nextLetters.top();
         nextLetters.pop();
@@ -33,17 +33,14 @@ vector<char> Alphabet::createAlphabet() {
                 nextLetters.push(n);
             }
         }
+        // Can check for multiple alphabets by seeing if more than 1 letter can be next
         if (nextLetters.size() > 1) {
             multipleAlphabets = true;
         }
     }
-    // stack contained more than 1 letter at some point
-    if (multipleAlphabets) {
-        cout << "Multiple alphabets are possible\n";
-    }
+
     // invalid: not all letters were included (cycles, invalid input)
     if (nodes.size() != alphabet.size()) {
-        cout << "Alphabet does not include all letters\n";
         alphabet = vector<char>{};
     }
     return alphabet;
@@ -53,8 +50,9 @@ vector<char> Alphabet::createAlphabet() {
  *            empty stack of next letters to go into alphabet
  */
 stack<Alphabet::Node*> Alphabet::addFirstLetter() {
+    // Check if a char exists that has no chars before it
     if (zeroInCount.size() < 1) {
-        cout << "No alphabet found\n";
+        // No alphabet can be created
         return {};
     }
     char c = *zeroInCount.begin();

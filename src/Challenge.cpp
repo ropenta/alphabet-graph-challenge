@@ -24,7 +24,7 @@ void Alphabet::addNewLetterNodeToGraph(char charVal) {
 
 /* Constucts directed graph of letter nodes and builds an alphabet using prevLetterCount to determine order */
 vector<char> Alphabet::findAlphabet() {
-    // Check cases with 0 or 1 word
+    // Check 0 or 1 word
     if (words.size() == 0) {
         return {};
     } 
@@ -62,10 +62,10 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
             if (firstChar != secondChar && diffIdx < 0) {
                 diffIdx = charIdx;
             }
-            if (nodes.count(firstChar) < 1) {
+            if (nodes.count(firstChar) == 0) {
                 addNewLetterNodeToGraph(firstChar);
             }
-            if (nodes.count(secondChar) < 1) {
+            if (nodes.count(secondChar) == 0) {
                 addNewLetterNodeToGraph(secondChar);
             }
 
@@ -103,7 +103,7 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
 /* Use stack to keep track of next letter(s) to pull from graph to add to alphabet 
  * Decrease prevLetterCount for each adjacent letter node and add to stack if count is 0 */
 vector<char> Alphabet::createAlphabet() {
-    if (lettersWithZeroPrevLetters.size() < 1) {
+    if (lettersWithZeroPrevLetters.size() == 0) {
         return {};
     }
 
@@ -115,15 +115,20 @@ vector<char> Alphabet::createAlphabet() {
     vector<char> alphabet = {};
     
     while (!nextLetters.empty()) {
+
         letter = nextLetters.top();
         nextLetters.pop();
         alphabet.push_back(letter->charVal);
+
         for (auto &n: letter->nextNeighbors) {
             n->prevLetterCount--;
-            if (n->prevLetterCount < 1) {
+
+            if (n->prevLetterCount <= 0) {
                 nextLetters.push(n);
             }
+            
         }
+
     }
 
     if (nodes.size() != alphabet.size()) {

@@ -1,7 +1,7 @@
 # jan-2021-test-challenge
 
 ## Problem:
-We're given a list of words sorted in "alphabetical" order. The letters consist of 'a-z', 'A-Z', and '0-9'. These individual letters are not necessarily sorted by the typical 'a-z' as we might expect. Instead, there could be any ordering of these letters, and our job is to figure out the "alphabetical" ordering.
+We're given a list of words sorted in "alphabetical" order. The letters consist of `'a-z'`, `'A-Z'`, and `'0-9'`. These individual letters are not necessarily sorted by the typical `'a-z'` as we might expect. Instead, there could be any ordering of these letters, and our job is to figure out the "alphabetical" ordering.
 
 To get a fully formed alphabet, the input list of words needs to have enough information to derive the complete order of the alphabet. Otherwise, an empty alphabet will be returned. If multiple possible alphabets can be formed, only one set will be returned.
 
@@ -28,52 +28,51 @@ Running unit tests:
 * `$ make clean` removes the executables created by the `program` and `test` commands. You should run this after each command to ensure you are using the latest code.
 
 ## A Solution
-Our goal is to take the ordered input set:
-`["bca", "aaa", "acb"]`
+Our goal is to take the ordered input set:  
+> `["bca", "aaa", "acb"]`
 
-and return the following ordering:
-`["b", "a", "c"]`
+and return the following ordering:  
+> `["b", "a", "c"]`
 
-By directly comparing adjacent words, we can figure out the ordering of letters
-bca
-aaa
+By directly comparing adjacent words, we can figure out the ordering of letters  
+>bca  
+aaa  
+`'b'` comes before `'a'`
 
-'b' comes before 'a'
+### How can we store this information? 
 
-How can we store this information? We could try storing them in a list or array:
-['b', 'a']
-
-This runs into a problem when new letters are added (say 'c') that are compared to letters
-already stored in the list (like 'a), especially if there are many letters already in the list.
-Trying to swap the existing values around would be difficult, so we need another solution.
-
-We can try storing additional information with each unique letter. Every time we encounter
+When we encounter
 a direct relationship between two letters, we can store the following data:
-* if we know 'b' comes before 'a':
-    * 'b' has a set of "nextLetters" that come after it in the alphabet, and 'a' is included in this set
-    * 'a' has a set of "prevLetters" that comes before it in the alphabt, and 'b' is included in this set
+* if we know `'b'` comes before `'a'`:
+    * `'b'` has a set of `"nextLetters"` that come after it in the alphabet, and `'a'` is included in this set
+    * `'a'` has a set of `"prevLetters"` that comes before it in the alphabet, and `'b'` is included in this set
 
-b->nextLetters = {a}
-b->prevLetters = {}
-
-a->nextLetters = {}
-a->prevLetters = {b}
+>`b->prevLetters = {}`  
+`b->nextLetters = {a}`  
+`a->prevLetters = {b}`  
+`a->nextLetters = {}`
 
 We can go through all the words in the input list and derive these relationships and store them.
 
-How can we figure out which letter comes first? It's simply the letter with an empty "prevLetters" set.
-Having no letters in "prevLetters" means that no letters could have come before, so it must be the first.
+### How can we figure out which letter comes first?   
+It's simply the letter with an empty `"prevLetters"` set.  
+Having no letters in `"prevLetters"` means that no letters could have come before, so it must be the first.  
 
-Once we find the letter with an empty "prevLetters" set, we can add it to the alphabet.
+Once we find the letter with an empty `"prevLetters"` set, we can add it to the alphabet.  
 
-alphabet: 'b'
+> `alphabet: 'b'`
 
-Once the letter 'b' is added, we need to remove it from all the letters that include 'b' in their prevLetters set.
-Thankfully, we can easily find these values by checking the nextLetters set of 'b'
+Once the letter `'b'` is added, we need to remove it from all the letters that include `'b'` in their prevLetters set.
+Thankfully, we can easily find these values by checking the nextLetters set of `'b'`
 
-a->prevLetters = {}
+>`a->prevLetters = {}`  
 
-Now we see that 'a' has an empty prevLetters set, and we can use that as our next letter.
+Now we see that `'a'` has an empty prevLetters set, and we can use that as our next letter.
 We can repeat this process until all letters have been added to the alphabet.
 
-One improvement we can make is, instead of storing all the "prevLetters" values, we can use a count instead.
+### Optimization
+One improvement we can make is, instead of storing all the "prevLetters" values, we can use a count instead. Anytime we add a new letter `'x'` to the alphabet,
+we can decrease the `"prevLetterCount"` of each letter in `'x'`s `"nextLetters"` set.
+
+>`a->prevLetterCount--`
+

@@ -5,7 +5,7 @@ using namespace std;
 /* Constructor */
 Alphabet::Alphabet(vector<string> in_words) {
     words = in_words;
-    nodes = {};
+    letterNodes = {};
     nodesWithNoPrevLetters = {};
 }
 
@@ -16,9 +16,9 @@ Alphabet::Node::Node(char in_char) {
 
 /* Inserts new unique letter into graph of letter nodes */
 void Alphabet::addNewLetterNodeToGraph(char charVal) {
-    if (nodes.find(charVal) == nodes.end()) {
+    if (letterNodes.find(charVal) == letterNodes.end()) {
         Node *n = new Node(charVal);
-        nodes[charVal] = n;
+        letterNodes[charVal] = n;
         nodesWithNoPrevLetters.insert(charVal);
     }
 }
@@ -31,15 +31,15 @@ vector<char> Alphabet::findAlphabet() {
         return {};
     } 
     else if (words.size() == 1) {
-        char c = words[0][0];
+        char letter = words[0][0];
 
         for (int i = 1; i < words[0].size(); i++) {
-            if (words[0][i] != c) {
+            if (words[0][i] != letter) {
                 return vector<char>{};
             }
         }
 
-        return vector<char>{c};
+        return vector<char>{letter};
     }
 
     // Build alphabet
@@ -64,13 +64,9 @@ void Alphabet::createDirectedGraph() {
             if (diffIdx < 0 && firstChar != secondChar) {
                 diffIdx = charIdx;
             }
-            if (nodes.count(firstChar) == 0) {
-                addNewLetterNodeToGraph(firstChar);
-            }
-            if (nodes.count(secondChar) == 0) {
-                addNewLetterNodeToGraph(secondChar);
-            }
 
+            addNewLetterNodeToGraph(firstChar);
+            addNewLetterNodeToGraph(secondChar);
             charIdx++;
         }
 
@@ -88,8 +84,8 @@ void Alphabet::createDirectedGraph() {
 
         // check if difference was found
         if (diffIdx != -1) {
-            Node *n1 = nodes[firstWord[diffIdx]];
-            Node *n2 = nodes[secondWord[diffIdx]];
+            Node *n1 = letterNodes[firstWord[diffIdx]];
+            Node *n2 = letterNodes[secondWord[diffIdx]];
 
             if (n1->nextLetters.find(n2) == n1->nextLetters.end()) {
                 n1->nextLetters.insert(n2);
@@ -108,19 +104,17 @@ vector<char> Alphabet::createAlphabet() {
     }
 
     // stack handles multiple possible alphabets
-    stack<Node*> nextLetters;
-    char c = *nodesWithNoPrevLetters.begin();
-    Node *letter = nodes[c];
-    nextLetters.push(letter);
     vector<char> alphabet = {};
+    stack<Node*> nextLetters;
+    Node *letterNode = letterNodes[*nodesWithNoPrevLetters.begin()];
+    nextLetters.push(letterNode);
     
     while (!nextLetters.empty()) {
-
-        letter = nextLetters.top();
+        letterNode = nextLetters.top();
         nextLetters.pop();
-        alphabet.push_back(letter->charVal);
+        alphabet.push_back(letterNode->charVal);
 
-        for (auto &n: letter->nextLetters) {
+        for (auto &n: letterNode->nextLetters) {
             n->prevLetterCount--;
 
             if (n->prevLetterCount == 0) {
@@ -129,7 +123,7 @@ vector<char> Alphabet::createAlphabet() {
         }
     }
 
-    if (nodes.size() != alphabet.size()) {
+    if (letterNodes.size() != alphabet.size()) {
         alphabet = vector<char>{};
     }
 

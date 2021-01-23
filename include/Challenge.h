@@ -29,7 +29,7 @@ private:
     };
     
     vector<string> words;
-    unordered_map<char, Node*> nodes;
+    unordered_map<char, Node*> letterNodes;
     unordered_set<char> nodesWithNoPrevLetters;
 
 public:

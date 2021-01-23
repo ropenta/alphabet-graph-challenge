@@ -12,7 +12,7 @@ Alphabet::Alphabet(vector<string> in_words) {
 }
 /* Node constructor */
 Alphabet::Node::Node(char in_char) {
-    c = in_char;
+    charVal = in_char;
 }
 
 
@@ -40,7 +40,7 @@ vector<char> Alphabet::findAlphabet() {
     // 2. find and add first letter, if it is unambiguous
     nextLetters = addFirstLetter();
 
-    // 3. add curr item to alphabet, get neighbors, decrease inCount, add zero in count nodes to stack
+    // 3. add curr item to alphabet, get neighbors, decrease prevLetterCount, add zero in count nodes to stack
     return createAlphabet();
 }
 
@@ -74,7 +74,7 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
                 // only add relation in nodes graph if it doesn't already exist
                 if (n1->nextNeighbors.find(n2) == n1->nextNeighbors.end()) {
                     n1->nextNeighbors.insert(n2);
-                    n2->inCount++;
+                    n2->prevLetterCount++;
                     // remove node2 from set of potential first letters
                     if (zeroInCount.count(secondChar) > 0) {
                         zeroInCount.erase(secondChar);
@@ -114,11 +114,11 @@ vector<char> Alphabet::createAlphabet() {
     while (!nextLetters.empty()) {
         Node *letter = nextLetters.top();
         nextLetters.pop();
-        alphabet.push_back(letter->c);
+        alphabet.push_back(letter->charVal);
         // update counts of neighboring letters, and add those that are next in line to the alphabet
         for (auto &n: letter->nextNeighbors) {
-            n->inCount--;
-            if (n->inCount < 1) {
+            n->prevLetterCount--;
+            if (n->prevLetterCount < 1) {
                 // multiple letters pushed in a loop can lead to multiple possible alphabets
                 nextLetters.push(n);
             }

@@ -5,17 +5,27 @@
 #include <stack>
 #include <unordered_set> // hash set
 #include <unordered_map> // hash map
+#include <cmath>         // so we can use min(a, b)
 
 using namespace std;
 
 /* Builds an alphabet given a list of words */
 class Alphabet {
 private:
-    /* Each unique char belongs to a Node */
+    
+    /*
+     * charVal:         a unique letter within the alphabet
+     * 
+     * prevLetterCount: a count of how many letters this char was directly compared to,
+     *                  and were determined to come before this letter in the alphabet
+     * 
+     * nextNeighbors:   the set of letters this char was directly compared to,
+     *                  and were determined to come after this letter in the alphabet
+     */    
     struct Node {
-        char c;                                 // current char
-        int inCount = 0;                        // # of incoming arrows
-        unordered_set<Node*> nextNeighbors;     // neighbors after this char
+        char charVal;
+        int prevLetterCount = 0;
+        unordered_set<Node*> nextNeighbors;
         Node(char in_char);
     };
     

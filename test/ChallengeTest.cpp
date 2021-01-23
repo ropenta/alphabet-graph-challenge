@@ -6,7 +6,7 @@ TEST_CASE( "Test all function calls") {
     Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
     REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'}); 
     REQUIRE( sampleTest.createDirectedGraph().size() == 3);
-    REQUIRE( sampleTest.addFirstLetter().top()->c == 'b');
+    REQUIRE( sampleTest.addFirstLetter().top()->charVal == 'b');
     REQUIRE( sampleTest.createAlphabet() == vector<char>{'b', 'a', 'c'});
 }
 

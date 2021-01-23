@@ -19,7 +19,7 @@ Output:
 
 ## Running this program:
 You can type `make` followed by the command you'd like to run
-* For example, `$ make run inputText=test/input.txt` builds a `program` executable, runs it, and prints out output
+* `$ make run inputText=test/input.txt` builds a `program` executable, runs it, and prints out output
     * the `inputText` value can be any input file with a valid set of words (separated by newlines) 
 
 Running unit tests:
@@ -60,9 +60,9 @@ Having no letters in `"prevLetters"` means that no letters could have come befor
 
 Once we find the letter with an empty `"prevLetters"` set, we can add it to the alphabet.  
 
-> `alphabet: 'b'`
+> `alphabet: ['b']`
 
-Once the letter `'b'` is added, we need to remove it from all the letters that include `'b'` in their prevLetters set.
+Once the letter `'b'` is added, we need to remove it from all the letters that include `'b'` in their `"prevLetters"` set.
 Thankfully, we can easily find these values by checking the nextLetters set of `'b'`
 
 >`a->prevLetters = {}`  
@@ -71,8 +71,7 @@ Now we see that `'a'` has an empty prevLetters set, and we can use that as our n
 We can repeat this process until all letters have been added to the alphabet.
 
 ### Optimization
-One improvement we can make is, instead of storing all the "prevLetters" values, we can use a count instead. Anytime we add a new letter `'x'` to the alphabet,
+One improvement we can make is, instead of storing all the `"prevLetters"` values, we can use a count instead. Anytime we add a new letter `'x'` to the alphabet,
 we can decrease the `"prevLetterCount"` of each letter in `'x'`s `"nextLetters"` set.
 
 >`a->prevLetterCount--`
-

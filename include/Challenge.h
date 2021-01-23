@@ -2,10 +2,10 @@
 #define Challenge_H
 #include <iostream>
 #include <vector>
-#include <stack>         // handle multiple alphabets
-#include <unordered_set> // hash set
-#include <unordered_map> // hash map
-#include <cmath>         // min(a, b)
+#include <stack>
+#include <unordered_set>
+#include <unordered_map>
+#include <cmath>
 
 using namespace std;
 
@@ -19,25 +19,25 @@ private:
      * prevLetterCount: a count of how many letters this char was directly compared to,
      *                  and were determined to come before this letter in the alphabet
      * 
-     * nextNeighbors:   the set of letters this char was directly compared to,
+     * nextLetters:   the set of letters this char was directly compared to,
      *                  and were determined to come after this letter in the alphabet */    
     struct Node {
         Node(char in_char);
-        char                 charVal;
-        int                  prevLetterCount = 0;
-        unordered_set<Node*> nextNeighbors;
+        char charVal;
+        int prevLetterCount = 0;
+        unordered_set<Node*> nextLetters;
     };
     
-    vector<string>             words;
+    vector<string> words;
     unordered_map<char, Node*> nodes;
-    unordered_set<char>        lettersWithZeroPrevLetters;
+    unordered_set<char> nodesWithNoPrevLetters;
 
 public:
     Alphabet(vector<string> in_words);
-    void                       addNewLetterNodeToGraph(char charVal);
-    vector<char>               findAlphabet();
-    unordered_map<char, Node*> createDirectedGraph();
-    vector<char>               createAlphabet();
+    void addNewLetterNodeToGraph(char charVal);
+    vector<char> findAlphabet();
+    void createDirectedGraph();
+    vector<char> createAlphabet();
 };
 
 #endif

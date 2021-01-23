@@ -2,13 +2,6 @@
 #include "Challenge.h"
 using namespace std;
 
-TEST_CASE( "Test all function calls") {
-    Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
-    REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'}); 
-    REQUIRE( sampleTest.createDirectedGraph().size() == 3);
-    REQUIRE( sampleTest.createAlphabet() == vector<char>{'b', 'a', 'c'});
-}
-
 TEST_CASE( "Test valid alphabets") {
     Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
     Alphabet firstAlphabetLetterNestedInLastWord = Alphabet({"bb", "bh", "hb", "hc", "hd", "dc", "dh", "ddg", "ddb"});

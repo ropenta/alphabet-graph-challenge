@@ -6,7 +6,6 @@ TEST_CASE( "Test all function calls") {
     Alphabet sampleTest = Alphabet({"bca", "aaa", "acb"});
     REQUIRE( sampleTest.findAlphabet() == vector<char>{'b', 'a', 'c'}); 
     REQUIRE( sampleTest.createDirectedGraph().size() == 3);
-    REQUIRE( sampleTest.addFirstLetter().top()->c == 'b');
     REQUIRE( sampleTest.createAlphabet() == vector<char>{'b', 'a', 'c'});
 }
 
@@ -38,17 +37,25 @@ TEST_CASE( "Test valid alphanumeric inputs") {
 TEST_CASE( "Test valid duplicate words") {
     Alphabet sameWords = Alphabet({"h", "h"});
     Alphabet duplicatesAtEnd = Alphabet({"bb", "bh", "hb", "hb"});
-    Alphabet duplicatesAtStart = Alphabet({"bb", "bb", "hb", "hi"});
     Alphabet multipleDuplicates = Alphabet({"bb", "bb", "hb", "hb"});
     REQUIRE( sameWords.findAlphabet() == vector<char>{'h'});
     REQUIRE( duplicatesAtEnd.findAlphabet() == vector<char>{'b', 'h'});
-    REQUIRE( duplicatesAtStart.findAlphabet() == vector<char>{'b', 'h', 'i'}); // ambiguous
     REQUIRE( multipleDuplicates.findAlphabet() == vector<char>{'b', 'h'});
+}
+
+TEST_CASE( "Test valid ambiguous alphabets") {
+    Alphabet duplicatesAtStart = Alphabet({"bb", "bb", "hb", "hi"});
+    REQUIRE( duplicatesAtStart.findAlphabet() == vector<char>{'b', 'h', 'i'});
 }
 
 TEST_CASE( "Test invalid small inputs") {
     Alphabet oneWord = Alphabet({"hi"});    
     REQUIRE( oneWord.findAlphabet() == vector<char>{});
+}
+
+TEST_CASE( "Test invalid long inputs") {
+    Alphabet longFirstWord = Alphabet({"dcabzyx", "c"});    
+    REQUIRE( longFirstWord.findAlphabet() == vector<char>{});
 }
 
 TEST_CASE( "Test invalid cycles") {

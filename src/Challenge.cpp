@@ -1,15 +1,19 @@
 #include "Challenge.h"
 
 using namespace std;
+// using GraphOfLetters_map_t = unordered_map<char, Alphabet::Node*>;
+
 
 /* Constructor */
 Alphabet::Alphabet(vector<string> in_words) {
     words = in_words;
     nodes = {};
     nextLetters = {};
-    zeroInCount = {};
+    lettersWithZeroPrevLetters = {};
     alphabet = {};
 }
+
+
 /* Node constructor */
 Alphabet::Node::Node(char in_char) {
     c = in_char;
@@ -19,11 +23,10 @@ Alphabet::Node::Node(char in_char) {
 /* Input: list of words */
 /* Output: alphabet     */
 vector<char> Alphabet::findAlphabet() {
-    // 0. check cases with 1 or fewer words
-    if (words.size() < 1) {
+    // 0. one word case doesn't require a graph
+    if (!words.size()) {
         return {};
     } else if (words.size() == 1) {
-        // edge case: 1 word
         char c = words[0][0];
         for (int i = 1; i < words[0].size(); i++) {
             // only valid if all chars are the same
@@ -34,15 +37,19 @@ vector<char> Alphabet::findAlphabet() {
         return vector<char>{c};
     }
 
-    // 1. compare adjacent words, find first difference if it exists
+    // 1. construct graph by comparing adjacent words
     nodes = createDirectedGraph();
 
     // 2. find and add first letter, if it is unambiguous
     nextLetters = addFirstLetter();
 
-    // 3. add curr item to alphabet, get neighbors, decrease inCount, add zero in count nodes to stack
+    // 3. add curr item to alphabet, get neighbors, decrease prevLetterCount, add zero in count nodes to stack
     return createAlphabet();
 }
+
+
+// CHANGE: add a new function for the inner do-while lopo
+
 
 
 /* Modifies: empty graph, set of letters with no inbound nodes pointing to them
@@ -53,17 +60,22 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
         string firstWord = words[i];
         string secondWord = words[i + 1];
         // loop through both words to see if there's a difference
-        for (int j = 0; j < firstWord.size() && j < secondWord.size(); j++) {
+        
+        // init nodes from both words ahead of time, and look for diff if it exists
+
+        // then have a single if statement to set the relation if it
+
+        for (int j = 0; j < min(firstWord.size(), secondWord.size()); j++) {
             char firstChar = firstWord[j];
             char secondChar = secondWord[j];
             // create new Nodes if either doesn't aleady exist
-            if (nodes.count(firstChar) < 1) {
+            if (nodes.find(firstChar) == nodes.end()) {
                 Node *n1 = new Node(firstChar);
                 nodes[firstChar] = n1;
                 // this node could be first in alphabet
-                zeroInCount.insert(firstChar);
+                lettersWithZeroPrevLetters.insert(firstChar);
             }
-            if (nodes.count(secondChar) < 1) {
+            if (nodes.count(secondChar) == nodes.end()) {
                 Node *n2 = new Node(secondChar);
                 nodes[secondChar] = n2;
             }
@@ -74,10 +86,10 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
                 // only add relation in nodes graph if it doesn't already exist
                 if (n1->nextNeighbors.find(n2) == n1->nextNeighbors.end()) {
                     n1->nextNeighbors.insert(n2);
-                    n2->inCount++;
+                    n2->prevLetterCount++;
                     // remove node2 from set of potential first letters
-                    if (zeroInCount.count(secondChar) > 0) {
-                        zeroInCount.erase(secondChar);
+                    if (lettersWithZeroPrevLetters.count(secondChar) > 0) {
+                        lettersWithZeroPrevLetters.erase(secondChar);
                     }    
                 }
                 // skip rest of loop (necessary, not an optimzation)
@@ -89,18 +101,18 @@ unordered_map<char, Alphabet::Node*> Alphabet::createDirectedGraph() {
 }
 
 
+// CHANGE this function to createAlphabet
 /* Modifies: graph, set of letters with no inbound nodes pointing to them, 
  *            empty stack of next letters to go into alphabet
  */
 stack<Alphabet::Node*> Alphabet::addFirstLetter() {
     // Check if a char exists that has no chars before it
-    if (zeroInCount.size() < 1) {
+    if (lettersWithZeroPrevLetters.size() < 1) {
         // No alphabet can be created
         return {};
     }
-    char c = *zeroInCount.begin();
-    Node *n1 = nodes[c];
-    nextLetters.push(n1);
+    char c = *lettersWithZeroPrevLetters.begin();
+    nextLetters.push(nodes[c]);
     return nextLetters;
 }
 
@@ -117,8 +129,8 @@ vector<char> Alphabet::createAlphabet() {
         alphabet.push_back(letter->c);
         // update counts of neighboring letters, and add those that are next in line to the alphabet
         for (auto &n: letter->nextNeighbors) {
-            n->inCount--;
-            if (n->inCount < 1) {
+            n->prevLetterCount--;
+            if (n->prevLetterCount < 1) {
                 // multiple letters pushed in a loop can lead to multiple possible alphabets
                 nextLetters.push(n);
             }

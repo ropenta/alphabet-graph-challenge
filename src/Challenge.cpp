@@ -72,7 +72,7 @@ void Alphabet::createDirectedGraph() {
             charIdx++;
         }
 
-        // check if difference was found
+        // update letter nodes when difference is found
         if (diffIdx != -1) {
             Node *n1 = letterNodes[firstWord[diffIdx]];
             Node *n2 = letterNodes[secondWord[diffIdx]];

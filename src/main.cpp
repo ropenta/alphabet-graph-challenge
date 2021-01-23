@@ -7,10 +7,12 @@ using namespace std;
 int main(int argc, char **argv) {
     /* Add your own input words here: */
     vector<string> inputWords = {
-        "bca",
-        "aaa",
-        "acb"
+        "bb", "bb", "hb", "hi"
     };
+    for (int i = 0; i < inputWords.size(); i++) {
+        cout << inputWords[i] << " ";
+    }
+    cout << "\n";
     Alphabet test = Alphabet(inputWords);
     vector<char> letters = test.findAlphabet();
     cout << "Alphabet: ";

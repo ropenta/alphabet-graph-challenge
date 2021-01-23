@@ -2,10 +2,10 @@
 #define Challenge_H
 #include <iostream>
 #include <vector>
-#include <stack>
+#include <stack>         // handle multiple alphabets
 #include <unordered_set> // hash set
 #include <unordered_map> // hash map
-#include <cmath>         // so we can use min(a, b)
+#include <cmath>         // min(a, b)
 
 using namespace std;
 
@@ -20,31 +20,24 @@ private:
      *                  and were determined to come before this letter in the alphabet
      * 
      * nextNeighbors:   the set of letters this char was directly compared to,
-     *                  and were determined to come after this letter in the alphabet
-     */    
+     *                  and were determined to come after this letter in the alphabet */    
     struct Node {
-        char charVal;
-        int prevLetterCount = 0;
-        unordered_set<Node*> nextNeighbors;
         Node(char in_char);
+        char                 charVal;
+        int                  prevLetterCount = 0;
+        unordered_set<Node*> nextNeighbors;
     };
     
-    /* Member variables */
-    vector<string> words;
+    vector<string>             words;
     unordered_map<char, Node*> nodes;
-    stack<Node*> nextLetters;
-    unordered_set<char> lettersWithZeroPrevLetters;
-    vector<char> alphabet;
-public:
-    /* Constructor */
-    Alphabet(vector<string> in_words);
+    unordered_set<char>        lettersWithZeroPrevLetters;
 
-    /* Member functions */
-    vector<char> findAlphabet();                        // Step 0: calls all the following functions
-    void addNewLetterNodeToGraph(char charVal);
-    unordered_map<char, Node*> createDirectedGraph();   // Step 1: creates graph connecting chars by their ordering
-    stack<Node*> addFirstLetter();                      // Step 2: adds the first letter of the alphabet (if it exists)
-    vector<char> createAlphabet();                      // Step 3: adds the rest of the alphabet
+public:
+    Alphabet(vector<string> in_words);
+    void                       addNewLetterNodeToGraph(char charVal);
+    vector<char>               findAlphabet();
+    unordered_map<char, Node*> createDirectedGraph();
+    vector<char>               createAlphabet();
 };
 
 #endif

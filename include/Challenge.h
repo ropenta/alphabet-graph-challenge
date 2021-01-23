@@ -20,7 +20,8 @@ private:
      *                  and were determined to come before this letter in the alphabet
      * 
      * nextLetters:   the set of letters this char was directly compared to,
-     *                  and were determined to come after this letter in the alphabet */    
+     *                  and were determined to come after this letter in the alphabet 
+     */    
     struct Node {
         Node(char in_char);
         char charVal;

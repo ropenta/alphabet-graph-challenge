@@ -33,7 +33,7 @@ private:
     vector<string> words;
     unordered_map<char, Node*> nodes;
     stack<Node*> nextLetters;
-    unordered_set<char> zeroInCount;
+    unordered_set<char> lettersWithZeroPrevLetters;
     vector<char> alphabet;
 public:
     /* Constructor */
@@ -41,6 +41,7 @@ public:
 
     /* Member functions */
     vector<char> findAlphabet();                        // Step 0: calls all the following functions
+    void addNewLetterNodeToGraph(char charVal);
     unordered_map<char, Node*> createDirectedGraph();   // Step 1: creates graph connecting chars by their ordering
     stack<Node*> addFirstLetter();                      // Step 2: adds the first letter of the alphabet (if it exists)
     vector<char> createAlphabet();                      // Step 3: adds the rest of the alphabet

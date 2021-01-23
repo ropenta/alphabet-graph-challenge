@@ -21,7 +21,8 @@ One [solution](#a-solution) is given below.
 
 ## Running this program:
 You can type `make` followed by the command you'd like to run
-* For example, `make run` builds a `program` executable, runs it, and prints out output
+* For example, `make run inputText=test/input.txt` builds a `program` executable, runs it, and prints out output
+    * the `inputText` value can be any input file with a valid set of words (separated by newlines) 
 * Running `make test` runs the suite of unit tests defined in ChallengeTest.cpp
 * Running `make clean` removes the executables created by the `program` and `test` commands. You should run this after each command to ensure you are using the latest code.
 

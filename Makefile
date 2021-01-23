@@ -27,7 +27,7 @@ HEADERS := $(INC_DIR)/*.h
 
 # Run the program
 run: program
-	./program
+	./program $(inputFile)
 
 # Run the tests
 test: $(TEST_DIR)/tester

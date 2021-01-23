@@ -17,34 +17,63 @@ Invalid Input (cycle):
 Output:
 `[]`
 
-One [solution](#a-solution) is given below.
-
 ## Running this program:
 You can type `make` followed by the command you'd like to run
-* For example, `make run inputText=test/input.txt` builds a `program` executable, runs it, and prints out output
+* For example, `$ make run inputText=test/input.txt` builds a `program` executable, runs it, and prints out output
     * the `inputText` value can be any input file with a valid set of words (separated by newlines) 
-* Running `make test` runs the suite of unit tests defined in ChallengeTest.cpp
-* Running `make clean` removes the executables created by the `program` and `test` commands. You should run this after each command to ensure you are using the latest code.
 
-## Using your own custom input:
-You can modify `main.cpp` to use a different set of input words, and `make run` will build the executable.
-
-Reading through `Challenge.h` first will help in understanding `Challenge.cpp` better. All the unit tests are included in `ChallengeTest.cpp`.
+Running unit tests:
+* `$ make clean`
+* `$ make test` runs the suite of unit tests defined in ChallengeTest.cpp
+* `$ make clean` removes the executables created by the `program` and `test` commands. You should run this after each command to ensure you are using the latest code.
 
 ## A Solution
-Goal:
-- We want to represent the alphabet as a directed graph (connections between letters are directional).
-- Each letter in the alphabet has a set of letters that come before, and set of letters that come later.
-- We don't need to store the whole set of letters that come before and after the letter, since it would take up more memory than is needed.
-- Instead, we can store the set of letters that are confirmed to come after, and a count of letters that come before.
-- We'd like to associate each letter with information that will help determine the order relative to other letters.
+Our goal is to take the ordered input set:
+`["bca", "aaa", "acb"]`
 
-Implementation:
-- We can store each unique letter inside a Node class that contains extra information.
-- Anytime we encounter a new ordering between two letters (e.g. 'b' comes before 'a'), we will store two values:
-    1) b's set of adjacent letters that come after it in the alphabet includes 'a'
-        bNode.nextNeighbors.add(aNode);
-    2) 'a' is pointed at by 'b', which we can represent with 'prevLetterCount'.
-        a.prevLetterCount++
-- To determine the first letter to choose, we choose the Node with a 'prevLetterCount' of 0.
-- This indicating that no letters come before in the alphabet.
+and return the following ordering:
+`["b", "a", "c"]`
+
+By directly comparing adjacent words, we can figure out the ordering of letters
+bca
+aaa
+
+'b' comes before 'a'
+
+How can we store this information? We could try storing them in a list or array:
+['b', 'a']
+
+This runs into a problem when new letters are added (say 'c') that are compared to letters
+already stored in the list (like 'a), especially if there are many letters already in the list.
+Trying to swap the existing values around would be difficult, so we need another solution.
+
+We can try storing additional information with each unique letter. Every time we encounter
+a direct relationship between two letters, we can store the following data:
+* if we know 'b' comes before 'a':
+    * 'b' has a set of "nextLetters" that come after it in the alphabet, and 'a' is included in this set
+    * 'a' has a set of "prevLetters" that comes before it in the alphabt, and 'b' is included in this set
+
+b->nextLetters = {a}
+b->prevLetters = {}
+
+a->nextLetters = {}
+a->prevLetters = {b}
+
+We can go through all the words in the input list and derive these relationships and store them.
+
+How can we figure out which letter comes first? It's simply the letter with an empty "prevLetters" set.
+Having no letters in "prevLetters" means that no letters could have come before, so it must be the first.
+
+Once we find the letter with an empty "prevLetters" set, we can add it to the alphabet.
+
+alphabet: 'b'
+
+Once the letter 'b' is added, we need to remove it from all the letters that include 'b' in their prevLetters set.
+Thankfully, we can easily find these values by checking the nextLetters set of 'b'
+
+a->prevLetters = {}
+
+Now we see that 'a' has an empty prevLetters set, and we can use that as our next letter.
+We can repeat this process until all letters have been added to the alphabet.
+
+One improvement we can make is, instead of storing all the "prevLetters" values, we can use a count instead.

@@ -57,28 +57,18 @@ void Alphabet::createDirectedGraph() {
         int diffIdx = -1;
         int charIdx = 0;
 
-        while (charIdx < min(firstWord.size(), secondWord.size())) {
-            char firstChar = firstWord[charIdx];
-            char secondChar = secondWord[charIdx];
+        while (charIdx < max(firstWord.size(), secondWord.size())) {
+            if (charIdx < firstWord.size()) {
+                addNewLetterNodeToGraph(firstWord[charIdx]);
+            }
+            if (charIdx < secondWord.size()) {
+                addNewLetterNodeToGraph(secondWord[charIdx]);
+            }
             
-            if (diffIdx < 0 && firstChar != secondChar) {
+            if (diffIdx < 0 && charIdx < firstWord.size() && charIdx < secondWord.size() 
+                    && firstWord[charIdx] != secondWord[charIdx]) {
                 diffIdx = charIdx;
             }
-
-            addNewLetterNodeToGraph(firstChar);
-            addNewLetterNodeToGraph(secondChar);
-            charIdx++;
-        }
-
-        while (charIdx < firstWord.size()) {
-            char charVal = firstWord[charIdx];
-            addNewLetterNodeToGraph(charVal);
-            charIdx++;
-        }
-
-        while (charIdx < secondWord.size()) {
-            char charVal = secondWord[charIdx];
-            addNewLetterNodeToGraph(charVal);
             charIdx++;
         }
 

@@ -19,8 +19,8 @@ Output:
 
 ## Running this program:
 You can type `make` followed by the command you'd like to run
-* `$ make run inputText=test/input.txt` builds a `program` executable, runs it, and prints out output
-    * the `inputText` value can be any input file with a valid set of words (separated by newlines) 
+* `$ make run inputFile=test/input.txt` builds a `program` executable, runs it, and prints out output
+    * the `inputFile` value can be any input file with a valid set of words (separated by newlines) 
 
 Running unit tests:
 * `$ make clean`

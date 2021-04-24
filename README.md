@@ -1,4 +1,4 @@
-# jan-2021-test-challenge
+# alphabet-challenge
 
 ## Problem:
 We're given a list of words sorted in "alphabetical" order. The letters consist of `'a-z'`, `'A-Z'`, and `'0-9'`. These individual letters are not necessarily sorted by the typical `'a-z'` as we might expect. Instead, there could be any ordering of these letters, and our job is to figure out the "alphabetical" ordering.
